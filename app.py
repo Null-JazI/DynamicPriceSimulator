@@ -23,7 +23,7 @@ with st.sidebar:
 
 if run_simulation:
     demand_fn, prices, demand, revenue, profit, cost = compute_demand(demand_type, a, b, fixed_cost, variable_cost)
-    optimal_price, max_profit = compute_optimal_price(demand_type,demand_fn, fixed_cost, variable_cost,a,b)
+    optimal_price, max_profit, demand_optimal = compute_optimal_price(demand_type,demand_fn, fixed_cost, variable_cost,a,b)
     is_optimal = evaluate_price_optimality(price, optimal_price)
     recommendation = generate_recommendation(is_optimal, price, optimal_price)
 

@@ -27,13 +27,8 @@ def compute_optimal_price_linear(fixed_cost, variable_cost, a, b):
     return None, None
 
 # ---------- EXPONENTIAL: Numerical Optimization ----------
-def compute_optimal_price_exponential(demand_fn, fixed_cost, variable_cost, price_bounds=(1, 100)):
-    def profit(p):
-        d = demand_fn(p)
-        r = p * d
-        c = fixed_cost + variable_cost * d
-        return -(r - c)
-
+def compute_optimal_price_exponential(a,b, fixed_cost, variable_cost, price_bounds=(1, 100)):
+    """
     result = minimize_scalar(profit, bounds=price_bounds, method='bounded')
 
     if result.success:
@@ -44,12 +39,23 @@ def compute_optimal_price_exponential(demand_fn, fixed_cost, variable_cost, pric
         return optimal_price, r - c
     else:
         return None, None
+    """
+    if b <= 0:
+        raise ValueError("Parameter b must be positive for exponential demand")
+    
+    optimal_price = (1/b) * (1 + b * variable_cost)
+    demand_at_optimal = a * np.exp(-b * optimal_price)
+    revenue = optimal_price * demand_at_optimal
+    total_cost = fixed_cost + variable_cost * demand_at_optimal
+    max_profit = revenue - total_cost
+    
+    return optimal_price, max_profit, demand_at_optimal
 
 # ---------- Master Function ----------
-def compute_optimal_price(demand_type, demand_fn, fixed_cost, variable_cost, a=1000, b=15):
+def compute_optimal_price(demand_type, demand_fn, fixed_cost, variable_cost, a, b):
     if demand_type == "Linear":
         return compute_optimal_price_linear(fixed_cost, variable_cost, a, b)
     elif demand_type == "Exponential":
-        return compute_optimal_price_exponential(demand_fn, fixed_cost, variable_cost)
+        return compute_optimal_price_exponential(a,b, fixed_cost, variable_cost)
     else:
         raise ValueError("Unsupported demand type")
