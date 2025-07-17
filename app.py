@@ -41,6 +41,38 @@ if run_simulation:
 
 uploaded_file = st.file_uploader("Upload Sample Pricing Data (CSV)", type=["csv"])
 if uploaded_file:
+    st.subheader("📂 Uploaded Data")
     df = pd.read_csv(uploaded_file)
     st.dataframe(df)
-    # Future: Add analysis from uploaded file
+
+    # Extract columns
+    try:
+        prices = df["Price ($)"]
+        demand = df["Demand (Units)"]
+        revenue = df["Revenue ($)"]
+        cost = df["Total Cost ($)"]
+        profit = df["Profit ($)"]
+
+        # Find optimal price in uploaded data
+        max_profit_idx = profit.idxmax()
+        optimal_price_from_csv = prices[max_profit_idx]
+        max_profit_value = profit[max_profit_idx]
+
+        # Allow user to enter a test price from range
+        user_price_csv = st.number_input("Your Price (from uploaded range)", min_value=float(prices.min()), max_value=float(prices.max()), value=float(prices.iloc[0]))
+
+        is_optimal_csv = evaluate_price_optimality(user_price_csv, optimal_price_from_csv)
+        recommendation_csv = generate_recommendation(is_optimal_csv, user_price_csv, optimal_price_from_csv)
+
+        # Display results
+        st.subheader("CSV Data Analysis")
+        st.markdown(f"- **Optimal Price (from CSV):** {format_currency(optimal_price_from_csv)}")
+        st.markdown(f"- **Max Profit:** {format_currency(max_profit_value)}")
+        st.markdown(f"- **Your Price:** {format_currency(user_price_csv)}")
+        st.warning(recommendation_csv if not is_optimal_csv else "✅ Your price is optimal or very close to it!")
+
+        # Plot uploaded data
+        st.pyplot(plot_revenue_profit(prices, revenue, profit, optimal_price_from_csv, user_price_csv))
+
+    except KeyError as e:
+        st.error(f"Missing required column in CSV: {e}")
