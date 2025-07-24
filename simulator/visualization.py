@@ -1,3 +1,4 @@
+#visualization.py
 import matplotlib.pyplot as plt
 
 def plot_revenue_profit(prices, revenue, profit, optimal_price=None, user_price=None):

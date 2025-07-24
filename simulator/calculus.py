@@ -1,3 +1,4 @@
+#calculus.py
 import sympy as sp
 import numpy as np
 from scipy.optimize import minimize_scalar
@@ -22,7 +23,7 @@ def compute_optimal_price_linear(fixed_cost, variable_cost, a, b):
             revenue = optimal_price * demand_val
             cost = fixed_cost + variable_cost * demand_val
             profit = revenue - cost
-            return optimal_price, profit
+            return optimal_price, profit, demand_val
 
     return None, None
 
